@@ -42,13 +42,25 @@ public class Move : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		GameObject[] objects = GameObject.FindGameObjectsWithTag ("Mov");
-		int r = left - right - b;
-		b = left - right;
+		GameObject camera = GameObject.FindGameObjectWithTag ("Cam");
+		GameObject wall = GameObject.Find("Wall");
+
+		int i = (left - right) / 2;
+		if (i > 22)  i = 22;
+		if (i < -22) i = -22;
+		int r = i - b;
+		b = i;
 
 		foreach (GameObject g in objects) {
-			g.GetComponent<Rigidbody> ().AddTorque(new Vector3(0f,0f,(float) r));
+//			g.GetComponent<Rigidbody> ().AddTorque(new Vector3(0f,0f,(float) r));
 			g.transform.Rotate(new Vector3(0f,0f,(float) r));
 //			g.transform.rotation.eulerAngles.y = (float)r;
 		}	
+
+		int t = right - left;
+		int o = (int)(((float)4 / 22) * t);
+
+		camera.transform.localPosition = new Vector3 ((float)o,camera.transform.position.y,camera.transform.position.z);
+		camera.transform.LookAt(wall.transform);
 	}
 }
