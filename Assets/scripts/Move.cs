@@ -10,67 +10,76 @@ public class Move : MonoBehaviour {
 
 	private int right = 0;
 	private int left = 0;
-	public static string url = "http://localhost:4567/";
+	private int b = 0;
+	private UnityWebRequest request;
+
+//	public static string url = "http://127.0.0.1:4567/";
+	public static string url = "http://192.168.3.8:4567/";
+
 	void Start()
 	{
-//		System.Diagnostics.Process process = new System.Diagnostics.Process();
-//		process.StartInfo.FileName = "/usr/bin/java";
-//		process.StartInfo.UseShellExecute = false;
-//		process.StartInfo.RedirectStandardOutput = true;
-//		process.StartInfo.RedirectStandardError = false;
-//		process.StartInfo.RedirectStandardInput = false;
-//		process.StartInfo.Arguments = "-jar Assets/plugins/GetBalance.jar";
-//
-//		process.OutputDataReceived += new System.Diagnostics.DataReceivedEventHandler(OutputHander);
-//		process.StartInfo.CreateNoWindow = true;
-//
-//		process.EnableRaisingEvents = false;
-//		process.Start();
-//
-//		process.BeginOutputReadLine();
-//
-		Thread thread = new Thread(new ThreadStart( GetBalance ) );
-		thread.Start ();
+//		request = new UnityWebRequest(url);
+		new Thread(new ThreadStart(GetBalance)).Start();
 	}
 
-//	void OutputHander(object sender, System.Diagnostics.DataReceivedEventArgs args)
-//	{
-//		if (!string.IsNullOrEmpty(args.Data)) {
-//			string[] splited = args.Data.Split(',');
-//			left = Int32.Parse(splited[0]);
-//			right = Int32.Parse(splited[1]);
-//		}
-//	}
-
-	int b = 0;
-	//socket
-	//firebase
-	//node+socket
 	void GetBalance(){
 		while (true) {
-			UnityWebRequest request = UnityWebRequest.Get (url);
+
+//			WWW www = new WWW (url);
+//
+//			// 成功
+//			if (www.error == null) {
+//				Debug.Log("Get Success");
+//
+//				string[] splited = www.text.Split (',');
+//				left = Int32.Parse (splited [0]);
+//				right = Int32.Parse (splited [1]);
+//			}
+//			// 失敗
+//			else{
+//				Debug.Log("Get Failure");           
+//			}
+
+//			Loom.QueueOnMainThread(()=>{
+//				//Set the vertices
+//				mesh.vertices = vertices;
+//				//Recalculate the bounds
+//				mesh.RecalculateBounds();
+//			});
+		//
+			request = new UnityWebRequest(url);
 			request.Send ();
 
 			if (request.isError) {
 				Debug.Log (request.error);
 			} else {
-				if (request.responseCode == 200) {
-					string text = request.downloadHandler.text;
-					string[] splited = text.Split (',');
+				if (request.responseCode == 200 && request != null) {
+					string[] splited = request.downloadHandler.text.Split (',');
+
 					left = Int32.Parse (splited [0]);
 					right = Int32.Parse (splited [1]);
 				}
 			}
-			Thread.Sleep (10);
+//			right += 1;
+//			Thread.Sleep (5000);
 		}
+//		new Thread(new ThreadStart(GetBalance)).Start();
 	}
 
+	void init(){
+		request = UnityWebRequest.Get(url);
+	}
+
+	public Text t;
 	// Update is called once per frame
 	void FixedUpdate () {
 
+		GetBalance ();
+
 		GameObject[] objects = GameObject.FindGameObjectsWithTag ("Mov");
 		GameObject camera = GameObject.FindGameObjectWithTag ("Cam");
-		GameObject wall = GameObject.Find("Wall");
+//		GameObject wall = GameObject.Find("Wall");
+//		t.text = "R: " + right + "L: " + left;
 
 		int i = (left - right) / 2;
 		if (i > 20)  i = 20;
@@ -86,6 +95,6 @@ public class Move : MonoBehaviour {
 		int o = (int)(((float)4 / 20) * t);
 
 		camera.transform.localPosition = new Vector3 ((float)o,camera.transform.position.y,camera.transform.position.z);
-		camera.transform.LookAt(wall.transform);
+//		camera.transform.LookAt(wall.transform);
 	}
 }
