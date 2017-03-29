@@ -8,46 +8,21 @@ using System.Threading;
 
 public class Move : MonoBehaviour {
 
-	private int right = 0;
-	private int left = 0;
+	int right = 0;
+	int left = 0;
 	private int b = 0;
-	private UnityWebRequest request;
 
 //	public static string url = "http://127.0.0.1:4567/";
 	public static string url = "http://192.168.3.8:4567/";
 
 	void Start()
 	{
-//		request = new UnityWebRequest(url);
 		new Thread(new ThreadStart(GetBalance)).Start();
 	}
 
 	void GetBalance(){
 		while (true) {
-
-//			WWW www = new WWW (url);
-//
-//			// 成功
-//			if (www.error == null) {
-//				Debug.Log("Get Success");
-//
-//				string[] splited = www.text.Split (',');
-//				left = Int32.Parse (splited [0]);
-//				right = Int32.Parse (splited [1]);
-//			}
-//			// 失敗
-//			else{
-//				Debug.Log("Get Failure");           
-//			}
-
-//			Loom.QueueOnMainThread(()=>{
-//				//Set the vertices
-//				mesh.vertices = vertices;
-//				//Recalculate the bounds
-//				mesh.RecalculateBounds();
-//			});
-		//
-			request = new UnityWebRequest(url);
+			UnityWebRequest request = new UnityWebRequest(url);
 			request.Send ();
 
 			if (request.isError) {
@@ -60,21 +35,15 @@ public class Move : MonoBehaviour {
 					right = Int32.Parse (splited [1]);
 				}
 			}
-//			right += 1;
-//			Thread.Sleep (5000);
+			Thread.Sleep (10);
 		}
-//		new Thread(new ThreadStart(GetBalance)).Start();
-	}
-
-	void init(){
-		request = UnityWebRequest.Get(url);
 	}
 
 	public Text t;
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		GetBalance ();
+//		GetBalance ();
 
 		GameObject[] objects = GameObject.FindGameObjectsWithTag ("Mov");
 		GameObject camera = GameObject.FindGameObjectWithTag ("Cam");
