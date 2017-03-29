@@ -11,46 +11,37 @@ public class Move : MonoBehaviour {
 	int right = 0;
 	int left = 0;
 	private int b = 0;
+	string text;
 
 //	public static string url = "http://127.0.0.1:4567/";
 	public static string url = "http://192.168.3.8:4567/";
+	private UnityWebRequest request;
 
 	void Start()
 	{
-		new Thread(new ThreadStart(GetBalance)).Start();
+		StartCoroutine(GetBalance());
 	}
 
-	void GetBalance(){
+	IEnumerator GetBalance(){
 		while (true) {
-			UnityWebRequest request = new UnityWebRequest(url);
-			request.Send ();
+			WWW www = new WWW(url);
+			yield return www;
+			string[] splited = www.text.Split (',');
 
-			if (request.isError) {
-				Debug.Log (request.error);
-			} else {
-				if (request.responseCode == 200 && request != null) {
-					string[] splited = request.downloadHandler.text.Split (',');
+			left = Int32.Parse (splited [0]);
+			right = Int32.Parse (splited [1]);
+			GameObject.FindGameObjectWithTag ("Text").GetComponent<TextMesh> ().text = www.text;
 
-					left = Int32.Parse (splited [0]);
-					right = Int32.Parse (splited [1]);
-				}
-			}
-			Thread.Sleep (10);
+//			Thread.Sleep (10);
 		}
 	}
-
-	public Text t;
-	// Update is called once per frame
 	void FixedUpdate () {
-
-//		GetBalance ();
 
 		GameObject[] objects = GameObject.FindGameObjectsWithTag ("Mov");
 		GameObject camera = GameObject.FindGameObjectWithTag ("Cam");
 //		GameObject wall = GameObject.Find("Wall");
-//		t.text = "R: " + right + "L: " + left;
 
-		int i = (left - right) / 2;
+		int i = (left - right);
 		if (i > 20)  i = 20;
 		if (i < -20) i = -20;
 		int r = i - b;
@@ -61,7 +52,7 @@ public class Move : MonoBehaviour {
 		}	
 
 		int t = right - left;
-		int o = (int)(((float)4 / 20) * t);
+		float o = ((3 / 20) * t);
 
 		camera.transform.localPosition = new Vector3 ((float)o,camera.transform.position.y,camera.transform.position.z);
 //		camera.transform.LookAt(wall.transform);
